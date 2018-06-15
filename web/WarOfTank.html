@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="frame" style="border: red 5px solid; margin: auto; width: 1000px; height: 800px; background-color: black">
+    <div id='player' style="width: 60px;height: 60px;top: 380px;left: 480px;background-color: black;position: relative"></div>
+</div>
+<div>
+    <p style="font-size: 20px; text-align: center">Score:<span id = "score">0</span></p>
+</div>
+
+<script>
+    //创建主界面、玩家
+    var mainFrame = document.getElementById('frame')
+    var player = document.getElementById('player')
+    var scoreEle = document.getElementById('score')
+    player.style.backgroundImage = 'url("../img/tank/up.gif")'
+    var gameover = 1;
+    var score = 0;
+
+    //创建敌人
+    var monster1 = document.createElement('div')
+    monster1.style.position = 'relative'
+    monster1.style.left = '0px'
+    monster1.style.top = '-60px'
+    monster1.style.width = '60px'
+    monster1.style.height = '60px'
+    monster1.style.backgroundColor = 'white'
+    monster1.style.backgroundImage = 'url("../img/tank/AIdown.png")'
+    var monster2 = document.createElement('div')
+    monster2.style.position = 'relative'
+    monster2.style.left = '940px'
+    monster2.style.top = '-120px'
+    monster2.style.width = '60px'
+    monster2.style.height = '60px'
+    monster2.style.backgroundColor = 'white'
+    monster2.style.backgroundImage = 'url("../img/tank/AIdown.png")'
+    var monster3 = document.createElement('div')
+    monster3.style.position = 'relative'
+    monster3.style.left = '940px'
+    monster3.style.top = '560px'
+    monster3.style.width = '60px'
+    monster3.style.height = '60px'
+    monster3.style.backgroundColor = 'white'
+    monster3.style.backgroundImage = 'url("../img/tank/AIdown.png")'
+    var monster4 = document.createElement('div')
+    monster4.style.position = 'relative'
+    monster4.style.left = '0px'
+    monster4.style.top = '500px'
+    monster4.style.width = '60px'
+    monster4.style.height = '60px'
+    monster4.style.backgroundColor = 'white'
+    monster4.style.backgroundImage = 'url("../img/tank/AIdown.png")'
+
+    //创建子弹
+    function creatBullet(tank, direction) {
+        var bullet = document.createElement('div')
+        bullet.style.position = 'absolute'
+        bullet.style.width = '5px'
+        bullet.style.height = '5px'
+        bullet.style.backgroundColor = 'white'
+        if (direction == 'up') {
+            bullet.style.left = (tank.offsetLeft + (tank.offsetWidth / 2)) + 'px'
+            bullet.style.top = tank.offsetTop + 'px'
+        }
+        else if (direction == 'down') {
+            bullet.style.left = (tank.offsetLeft + (tank.offsetWidth / 2)) + 'px'
+            bullet.style.top = (tank.offsetTop + tank.offsetWidth) + 'px'
+        }
+        else if (direction == 'left') {
+            bullet.style.left = tank.offsetLeft + 'px'
+            bullet.style.top = (tank.offsetTop + (tank.offsetHeight / 2)) + 'px'
+        }
+        else if (direction == 'right') {
+            bullet.style.left = (tank.offsetLeft + tank.offsetWidth) + 'px'
+            bullet.style.top = (tank.offsetTop + (tank.offsetHeight / 2)) + 'px'
+        }
+        mainFrame.appendChild(bullet)
+        return bullet
+    }
+
+
+    // 子弹发射 运行轨迹
+    function shoot(bullet, direction, tankType) {
+        if (gameover == 0) {
+            console.log("gameover");
+            return
+        }
+        //判断是谁的子弹，是否杀死敌方
+        if (tankType == 'player') {
+            if ((bullet.offsetLeft > monster1.offsetLeft + 5)
+                    && (bullet.offsetLeft < monster1.offsetLeft + 60)
+                    && (bullet.offsetTop > monster1.offsetTop + 5)
+                    && (bullet.offsetTop < monster1.offsetTop + 60)
+            ) {
+                score += 1
+                monster1.style.left = '0px'
+                monster1.style.top = '-60px'
+            }
+            if ((bullet.offsetLeft > monster2.offsetLeft + 5)
+                    && (bullet.offsetLeft < monster2.offsetLeft + 60)
+                    && (bullet.offsetTop > monster2.offsetTop + 5)
+                    && (bullet.offsetTop < monster2.offsetTop + 60)
+            ) {
+                score += 1
+                monster2.style.left = '940px'
+                monster2.style.top = '-120px'
+            }
+            if ((bullet.offsetLeft > monster3.offsetLeft + 5)
+                    && (bullet.offsetLeft < monster3.offsetLeft + 60)
+                    && (bullet.offsetTop > monster3.offsetTop + 5)
+                    && (bullet.offsetTop < monster3.offsetTop + 60)
+            ) {
+                score += 1
+                monster3.style.left = '940px'
+                monster3.style.top = '560px'
+            }
+            if ((bullet.offsetLeft > monster4.offsetLeft + 5)
+                    && (bullet.offsetLeft < monster4.offsetLeft + 60)
+                    && (bullet.offsetTop > monster4.offsetTop + 5)
+                    && (bullet.offsetTop < monster4.offsetTop + 60)
+            ) {
+                score += 1
+                monster4.style.left = '0px'
+                monster4.style.top = '500px'
+            }
+        }
+
+        check : if (tankType == 'monster') {
+            if ((bullet.offsetLeft > player.offsetLeft)
+                    && (bullet.offsetLeft < player.offsetLeft + 55)
+                    && (bullet.offsetTop > player.offsetTop)
+                    && (bullet.offsetTop < player.offsetTop + 55)
+            ) {
+                clearInterval(t1)
+                clearInterval(t2)
+                clearInterval(t3)
+                clearInterval(t4)
+                var over = document.createElement('div')
+                over.style.position = 'relative'
+                over.style.width = '1000px'
+                over.style.height = '600px'
+                over.style.left = '0px'
+                over.style.top = '-300px'
+                over.style.backgroundImage = 'url("../img/tank/gameover.png")'
+                mainFrame.appendChild(over)
+                gameover = 0
+
+                //显示score
+                var scoreboard = document.createElement('div')
+                scoreboard.style.position = 'relative'
+                scoreboard.style.width = '1000px'
+                scoreboard.style.height = '200px'
+                scoreboard.style.top = '-300px'
+                scoreboard.style.left = '0px'
+                scoreboard.innerHTML = 'SCORE:  ' + score
+                scoreboard.style.color = 'red'
+                scoreboard.style.fontSize = '100px'
+                scoreboard.style.textAlign = 'center'
+                mainFrame.appendChild(scoreboard)
+                scoreEle.innerHTML = score
+                return
+            }
+            scoreEle.innerHTML = score
+        }
+
+        // 画出子弹运行轨迹
+        if (direction == 'up') {
+            if (bullet.offsetTop == 8) {
+                mainFrame.removeChild(bullet)
+            }
+            bullet.style.top = (bullet.offsetTop - 5) + 'px'
+            setTimeout(function () {
+                shoot(bullet, direction, tankType)
+            }, 25)
+        }
+        if (direction == 'down') {
+            if (bullet.offsetTop == (frame.offsetTop - 5 + frame.offsetHeight)) {
+                mainFrame.removeChild(bullet)
+            }
+            bullet.style.top = (bullet.offsetTop + 5) + 'px'
+            setTimeout(function () {
+                shoot(bullet, direction, tankType)
+            }, 25)
+        }
+        if (direction == 'left') {
+            if (bullet.offsetLeft == frame.offsetLeft) {
+                mainFrame.removeChild(bullet)
+            }
+            bullet.style.left = (bullet.offsetLeft - 5) + 'px'
+            setTimeout(function () {
+                shoot(bullet, direction, tankType)
+            }, 25)
+        }
+        if (direction == 'right') {
+            if (bullet.offsetLeft == frame.offsetLeft + frame.offsetWidth - 5) {
+                mainFrame.removeChild(bullet)
+            }
+            bullet.style.left = (bullet.offsetLeft + 5) + 'px'
+            setTimeout(function () {
+                shoot(bullet, direction, tankType)
+            }, 25)
+        }
+    }
+
+    function tankMove(tank, tankType, direction) {
+        if (tankType != 0) {
+            if (direction == 'up') {
+                tank.style.backgroundImage = 'url("../img/tank/AIup.png")'
+            } else if (direction == 'down') {
+                tank.style.backgroundImage = 'url("../img/tank/AIdown.png")'
+            } else if (direction == 'left') {
+                tank.style.backgroundImage = 'url("../img/tank/AIleft.png")'
+            } else if (direction == 'right') {
+                tank.style.backgroundImage = 'url("../img/tank/AIright.png")'
+            }
+        }
+//        tankType为坦克类型，需要*60计算高度
+        if (direction == 'up') {
+            if (tank.offsetTop > frame.offsetTop + 10) {
+                tank.style.top = (tank.offsetTop - 20 - mainFrame.offsetTop - 60 * tankType ) + 'px'
+            }
+        } else if (direction == 'down') {
+            if ((tank.offsetTop + tank.offsetHeight) < (mainFrame.offsetTop + mainFrame.offsetHeight - 10)) {
+                tank.style.top = (tank.offsetTop - mainFrame.offsetTop + 10 - 60 * tankType) + 'px'
+            }
+        } else if (direction == 'left') {
+            if (tank.offsetLeft > frame.offsetLeft + 10) {
+                tank.style.left = (tank.offsetLeft - 20 - mainFrame.offsetLeft) + 'px'
+            }
+        } else if (direction == 'right') {
+            if (tank.offsetLeft < (frame.offsetLeft + frame.offsetWidth - tank.offsetWidth - 10)) {
+                tank.style.left = (tank.offsetLeft - mainFrame.offsetLeft + 10 ) + 'px'
+            }
+        }
+    }
+
+    //监听键盘事件
+    pre = 'w'
+    document.onkeydown = function keyDown(e) {
+        console.log(e.which);
+        // w:87 s:83 a:65 d 68 j:74
+
+        if (e.which == '68') {
+            tankMove(player, 0, 'right')
+            pre = 'd'
+            player.style.backgroundImage = 'url("../img/tank/right.gif")'
+        } else if (e.which == '87') {
+            tankMove(player, 0, 'up')
+            pre = 'w'
+            player.style.backgroundImage = 'url("../img/tank/up.gif")'
+        } else if (e.which == '83') {
+            tankMove(player, 0, 'down')
+            pre = 's'
+            player.style.backgroundImage = 'url("../img/tank/down.png")'
+        } else if (e.which == '65') {
+            tankMove(player, 0, 'left')
+            pre = 'a'
+            player.style.backgroundImage = 'url("../img/tank/left.gif")'
+        }
+        if (e.which == '74') {
+            if (pre == 'w') {
+                shoot(creatBullet(player, 'up'), 'up', 'player')
+            }
+            if (pre == 's') {
+                shoot(creatBullet(player, 'down'), 'down', 'player')
+            }
+            if (pre == 'a') {
+                shoot(creatBullet(player, 'left'), 'left', 'player')
+            }
+            if (pre == 'd') {
+                shoot(creatBullet(player, 'right'), 'right', 'player')
+            }
+        }
+    }
+
+    // 怪物工作
+    function monsterWork(monster, type, alive) {
+        if (alive = 0) {
+            return
+        }
+        var randomWork = Math.floor(Math.random() * 3)
+        //  敌方在左上
+        if (((monster.offsetTop + 30) < player.offsetTop) && ((monster.offsetLeft + 30) < player.offsetLeft)) {
+//            敌方向右向下移动
+            //如果向右走路径近
+            if ((player.offsetLeft - monster.offsetLeft - 30) < (player.offsetTop - monster.offsetTop - 30)) {
+                if (randomWork == 0 || randomWork == 1) {
+                    tankMove(monster, type, 'right')
+                } else {
+                    tankMove(monster, type, 'down')
+                }
+            } else {
+                if (randomWork == 0 || randomWork == 1) {
+                    tankMove(monster, type, 'down')
+                } else {
+                    tankMove(monster, type, 'right')
+                }
+            }
+        }
+        //地方在左下
+        else if ((monster.offsetLeft + 30 < player.offsetLeft) && (monster.offsetTop > player.offsetTop + 30)) {
+//            敌方向右上移动
+            //如果向右走路径近
+            if ((player.offsetLeft - monster.offsetLeft + 30) < (monster.offsetTop - player.offsetTop + 30 )) {
+                if (randomWork == 0 || randomWork == 1) {
+                    tankMove(monster, type, 'right')
+                } else {
+                    tankMove(monster, type, 'up')
+                }
+            } else {
+                if (randomWork == 0 || randomWork == 1) {
+                    tankMove(monster, type, 'up')
+                } else {
+                    tankMove(monster, type, 'right')
+                }
+            }
+        }
+        // 敌方在右下
+        else if ((monster.offsetLeft > player.offsetLeft + 30 ) && (monster.offsetTop > player.offsetTop + 30)) {
+            if ((monster.offsetLeft - player.offsetLeft + 30) < (monster.offsetTop - player.offsetTop + 30)) {
+                if (randomWork == 0 || randomWork == 1) {
+                    tankMove(monster, type, 'left')
+                } else {
+                    tankMove(monster, type, 'up')
+                }
+            } else {
+                if (randomWork == 0 || randomWork == 1) {
+                    tankMove(monster, type, 'up')
+                } else {
+                    tankMove(monster, type, 'left')
+                }
+            }
+        }
+        //敌方在右上
+        else if ((monster.offsetLeft > player.offsetLeft + 30) && (monster.offsetTop + 30 < player.offsetTop)) {
+            if ((monster.offsetLeft - player.offsetLeft + 30) < (player.offsetTop - monster.offsetTop + 30)) {
+                if (randomWork == 0 || randomWork == 1) {
+                    tankMove(monster, type, 'left')
+                } else {
+                    tankMove(monster, type, 'down')
+                }
+            } else {
+                if (randomWork == 0 || randomWork == 1) {
+                    tankMove(monster, type, 'down')
+                } else {
+                    tankMove(monster, type, 'left')
+                }
+            }
+        }
+        //敌人在左方
+        else if ((monster.offsetTop + 30 > player.offsetTop)
+                && (monster.offsetTop < player.offsetTop + 30)
+                && (monster.offsetLeft < player.offsetLeft)) {
+            if (randomWork == 0 || randomWork ==1) {
+                tankMove(monster, type, 'right')
+            } else {
+                shoot(creatBullet(monster, 'right'), 'right', 'monster')
+            }
+        }
+        // 敌人在右方
+        else if (((monster.offsetTop + 30 > player.offsetTop)
+                && (monster.offsetTop < player.offsetTop + 30)
+                && (monster.offsetLeft > player.offsetLeft))) {
+            if (randomWork == 0 || randomWork ==1) {
+                tankMove(monster, type, 'left')
+            } else {
+                shoot(creatBullet(monster, 'left'), 'left', 'monster')
+            }
+        }
+        // 敌人在上方
+        else if ((monster.offsetLeft + 30 > player.offsetLeft)
+                && (monster.offsetLeft < player.offsetLeft + 30)
+                && (monster.offsetTop < player.offsetTop)) {
+            if (randomWork == 0 || randomWork ==1) {
+                tankMove(monster, type, 'down')
+            } else {
+                shoot(creatBullet(monster, 'down'), 'down', 'monster')
+            }
+        }
+        //敌人在下方
+        else if ((monster.offsetLeft + 30 > player.offsetLeft)
+                && (monster.offsetLeft < player.offsetLeft + 30)
+                && (monster.offsetTop > player.offsetTop)) {
+            if (randomWork == 0 || randomWork ==1) {
+                tankMove(monster, type, 'up')
+            } else {
+                shoot(creatBullet(monster, 'up'), 'up', 'monster')
+            }
+        }
+    }
+
+    //创建敌人
+    function createMonster() {
+        mainFrame.appendChild(monster1)
+        mainFrame.appendChild(monster2)
+        mainFrame.appendChild(monster3)
+        mainFrame.appendChild(monster4)
+        t1 = setInterval("monsterWork(monster1,1)", 200)
+        t2 = setInterval("monsterWork(monster2,2)", 200)
+        t3 = setInterval("monsterWork(monster3,3)", 200)
+        t4 = setInterval("monsterWork(monster4,4)", 200)
+    }
+    createMonster()
+
+</script>
+
+</body>
+</html>
